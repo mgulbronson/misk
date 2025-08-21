@@ -1131,8 +1131,16 @@ class ReflectionQueryFactoryTest {
     val original = queryFactory.newQuery<OperatorsMovieQuery>()
       .allowTableScan()
       .constraint { root -> like(root.get("name"), "Jurassic%") }
+      .apply {
+        maxRows = 10
+        firstResult = 5
+      }
 
     val clone = original.clone<OperatorsMovieQuery>()
+
+    // Check that fields are cloned correctly
+    assertThat(clone.maxRows).isEqualTo(original.maxRows)
+    assertThat(clone.firstResult).isEqualTo(original.firstResult)
 
     // Original and cloned queries should provide the same result
     assertThat(
